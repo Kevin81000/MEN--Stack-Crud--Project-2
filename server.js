@@ -66,9 +66,10 @@ app.use(
     },
   })
 );
-
+ const authRoute = require('./routes/auth.js')
 // Routes
-app.use('/api/auth', require('./routes/auth'));
+//app.use('/api/auth', require('./routes/auth'));
+app.use("./auth",authRoute);
 app.use('/api/posts', require('./routes/posts'));
 app.use('/api/testimonials', require('./routes/testimonials'));
 app.use('/api/contacts', require('./routes/contacts'));
@@ -76,7 +77,7 @@ app.use('/api/pages', require('./routes/pages'));
 
 // Front-end Routes
 app.get('/', (req, res) => res.render('index', { user: req.session.user || null }));
-app.get('/about', (req, res) => res.render('about', { user: req.session.user || null }));
+app.get('/dashboard', (req, res) => res.render('dashboard', { user: req.session.user || null }));
 app.get('/blog', (req, res) => res.render('blog', { user: req.session.user || null }));
 app.get('/contact', (req, res) => res.render('contact', { user: req.session.user || null }));
 app.get('/blog/:id', (req, res) => res.render('blog-post', { user: req.session.user || null }));
@@ -85,7 +86,7 @@ app.get('/create-post', (req, res) => {
   res.render('create-post', { user: req.session.user });
 });
 app.get('/login', (req, res) => res.render('login', { user: req.session.user || null }));
-app.get('/register', (req, res) => res.render('register', { user: req.session.user || null }));
+//app.get('/register', (req, res) => res.render('register', { user: req.session.user || null }));
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
