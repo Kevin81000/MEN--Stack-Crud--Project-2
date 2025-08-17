@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const Post = require('../models/post');
+const Post = require('./models/Post'); 
+ console.log('Post model loaded in server.js:', !!require('./models/Post'));
+
+
 const authMiddleware = require('../middleware/auth');
 const adminMiddleware = require('../middleware/admin');
 
@@ -15,7 +18,7 @@ router.post('/', authMiddleware, async (req, res) => {
   }
 });
 
-router.get('/', async (req, res) => {
+router.get('/', async (req, res) => { 
   try {
     const posts = await Post.find().populate('author', 'email');
     res.json(posts);
@@ -24,7 +27,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-router.get('/:id', async (req, res) => {
+router.get('/:id', async (req, res) => { 
   try {
     const post = await Post.findById(req.params.id).populate('author', 'email');
     if (!post) return res.status(404).json({ msg: 'Post not found' });
@@ -34,13 +37,14 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-router.put('/:id', authMiddleware, async (req, res) => {
+router.put('/:id', authMiddleware, async (req, res) => { // Fixed syntax
   const { title, content } = req.body;
   try {
     const post = await Post.findById(req.params.id);
     if (!post) return res.status(404).json({ msg: 'Post not found' });
-    if (post.author.toString() !== req.session.user.id && req.session.user.role !== 'admin')
+    if (post.author.toString() !== req.session.user.id && req.session.user.role !== 'admin') {
       return res.status(401).json({ msg: 'Not authorized' });
+    }
 
     post.title = title || post.title;
     post.content = content || post.content;
@@ -56,8 +60,9 @@ router.delete('/:id', authMiddleware, async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
     if (!post) return res.status(404).json({ msg: 'Post not found' });
-    if (post.author.toString() !== req.session.user.id && req.session.user.role !== 'admin')
+    if (post.author.toString() !== req.session.user.id && req.session.user.role !== 'admin') {
       return res.status(401).json({ msg: 'Not authorized' });
+    }
 
     await post.deleteOne();
     res.json({ msg: 'Post deleted' });

@@ -2,26 +2,28 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard</title>
-  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/stylesheets/style.css">
 </head>
 <body>
-  <h1>Dashboard</h1>
-  <button onclick="localStorage.removeItem('token'); window.location.href='/'">Logout</button>
-
-  <h2>Create Profile</h2>
-  <form id="profileForm">
-    <input type="text" id="name" placeholder="Name" required>
-    <input type="text" id="platform" placeholder="Platform (e.g., Twitch)" required>
-    <input type="text" id="contentType" placeholder="Content Type (e.g., Gaming)" required>
-    <textarea id="bio" placeholder="Bio"></textarea>
-    <button type="submit">Create Profile</button>
-  </form>
-
-  <h2>Your Profiles</h2>
-  <div id="profiles"></div>
-
-  
+  <h1>Welcome, <%= user.username %>!</h1>
+  <% if (posts && posts.length > 0) { %>
+    <h2>Your Profiles</h2>
+    <ul>
+      <% posts.forEach(post => { %>
+        <li>
+          <h3><%= post.title %></h3>
+          <p><%= post.content %></p>
+          <small>Created: <%= post.createdAt.toLocaleDateString() %></small>
+          <a href="/edit-post/<%= post.id %>">Edit</a>
+          <form action="/api/posts/<%= post.id %>?_method=DELETE" method="POST" style="display:inline;">
+            <button type="submit">Delete</button>
+          </form>
+        </li>
+      <% }); %>
+    </ul>
+  <% } else { %>
+    <p>You have no profiles yet. <a href="/create-post">Create one now</a>.</p>
+  <% } %>
 </body>
 </html>

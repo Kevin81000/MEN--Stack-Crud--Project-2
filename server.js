@@ -6,6 +6,9 @@ const path = require('path');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const connectDB = require('./config/db');
+const methodOverride = require('method-override');
+const authMiddleware = require('./middleware/auth'); 
+
 console.log('Checking modules...');
 console.log('express:', !!require('express'));
 console.log('mongoose:', !!require('mongoose'));
@@ -14,7 +17,8 @@ console.log('cors:', !!require('cors'));
 console.log('path:', !!require('path'));
 console.log('express-session:', !!require('express-session'));
 console.log('connect-mongo:', !!require('connect-mongo'));
-//console.log('connectDB:', !!require('/config/db'));
+console.log('Post model loaded:', !!require('../models/Post')); 
+
 const app = express();
 
 // Load environment variables
@@ -29,7 +33,7 @@ console.log('dotenv parsed:', process.env);
 
 // Validate environment variables
 if (!process.env.MONGODB_URI) {
-  console.error('Error: MONGODB_URI is not defined in .env file');
+  console.error('Error: MONGO_URI is not defined in .env file');
   process.exit(1);
 }
 if (!process.env.SESSION_SECRET) {
@@ -44,6 +48,7 @@ connectDB();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(methodOverride('_method')); // Enable method override for PUT/DELETE
 app.use(express.static(path.join(__dirname, 'public')));
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -66,27 +71,81 @@ app.use(
     },
   })
 );
- const authRoute = require('./routes/auth.js')
+
 // Routes
-//app.use('/api/auth', require('./routes/auth'));
-app.use("./auth",authRoute);
-app.use('/api/posts', require('./routes/posts'));
-app.use('/api/testimonials', require('./routes/testimonials'));
+const authRoute = require('./routes/auth.js');
+app.use('/auth', authRoute);
+const profileroutes = require('./routes/profiles.js'); 
+app.use('/profiles', profileroutes); 
+app.use('/api/posts', require('./routes/posts')); 
 app.use('/api/contacts', require('./routes/contacts'));
 app.use('/api/pages', require('./routes/pages'));
 
 // Front-end Routes
 app.get('/', (req, res) => res.render('index', { user: req.session.user || null }));
 app.get('/dashboard', (req, res) => res.render('dashboard', { user: req.session.user || null }));
-app.get('/blog', (req, res) => res.render('blog', { user: req.session.user || null }));
 app.get('/contact', (req, res) => res.render('contact', { user: req.session.user || null }));
-app.get('/blog/:id', (req, res) => res.render('blog-post', { user: req.session.user || null }));
 app.get('/create-post', (req, res) => {
   if (!req.session.user) return res.redirect('/login');
   res.render('create-post', { user: req.session.user });
 });
 app.get('/login', (req, res) => res.render('login', { user: req.session.user || null }));
-//app.get('/register', (req, res) => res.render('register', { user: req.session.user || null }));
+// app.get('/register', (req, res) => res.render('register', { user: req.session.user || null })); // Commented out
+
+// Blog Routes
+app.get('/blog', async (req, res) => {
+  try {
+    const posts = await Post.find().populate('author', 'email');
+    res.render('blog', { user: req.session.user || null, posts });
+  } catch (err) {
+    console.error('Error fetching posts:', err);
+    res.render('blog', { user: req.session.user || null, posts: [] });
+  }
+});
+
+app.get('/blog/:id', async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id).populate('author', 'email');
+    if (!post) return res.status(404).render('404', { user: req.session.user || null, message: 'Post not found' });
+    res.render('blog-post', { user: req.session.user || null, post });
+  } catch (err) {
+    console.error('Error fetching post:', err);
+    res.status(500).render('404', { user: req.session.user || null, message: 'Server error' });
+  }
+});
+
+app.get('/edit-post/:id', async (req, res) => {
+  if (!req.session.user) return res.redirect('/login');
+  try {
+    const post = await Post.findById(req.params.id).populate('author', 'email');
+    if (!post || (post.author.toString() !== req.session.user.id && req.session.user.role !== 'admin')) {
+      return res.status(403).render('404', { user: req.session.user || null, message: 'Not authorized' });
+    }
+    res.render('edit-post', { user: req.session.user, post });
+  } catch (err) {
+    console.error('Error fetching post for edit:', err);
+    res.status(500).render('404', { user: req.session.user || null, message: 'Server error' });
+  }
+});
+
+// Update Post Route (API style for consistency with routes/posts.js)
+app.put('/api/posts/:id', authMiddleware, async (req, res) => {
+  const { title, content } = req.body;
+  try {
+    const post = await Post.findById(req.params.id);
+    if (!post) return res.status(404).json({ msg: 'Post not found' });
+    if (post.author.toString() !== req.session.user.id && req.session.user.role !== 'admin') {
+      return res.status(401).json({ msg: 'Not authorized' });
+    }
+    post.title = title || post.title;
+    post.content = content || post.content;
+    post.updatedAt = Date.now();
+    await post.save();
+    res.json(post);
+  } catch (err) {
+    res.status(500).json({ msg: 'Server error' });
+  }
+});
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {

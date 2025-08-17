@@ -1,0 +1,12 @@
+<%- include('layout', { title: 'Edit Post', body: 
+  <section>
+    <h2>Edit Post</h2>
+    <form action="/api/posts/<%= post._id %>" method="POST">
+      <input type="hidden" name="_method" value="PUT">
+      <input type="text" name="title" value="<%= post.title %>" required>
+      <textarea name="content" required><%= post.content %></textarea>
+      <button type="submit">Update Post</button>
+    </form>
+    <a href="/blog/<%= post._id %>">Cancel</a>
+  </section>
+ }) %>

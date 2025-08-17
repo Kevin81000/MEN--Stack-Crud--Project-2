@@ -1,0 +1,15 @@
+<%- include('layout', { title: 'Blog Post', body: 
+  <section>
+    <h2><%= post.title %></h2>
+    <p><%= post.content %></p>
+    <p>By <%= post.author.email %> on <%= post.createdAt.toLocaleDateString() %></p>
+    <% if (user && (user.id === post.author._id.toString() || user.role === 'admin')) { %>
+      <a href="/edit-post/<%= post._id %>">Edit</a>
+      <form action="/api/posts/<%= post._id %>" method="POST" style="display:inline;">
+        <input type="hidden" name="_method" value="DELETE">
+        <button type="submit">Delete</button>
+      </form>
+    <% } %>
+    <a href="/blog">Back to Blog</a>
+  </section>
+ }) %>
