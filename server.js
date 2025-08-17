@@ -17,7 +17,7 @@ console.log('cors:', !!require('cors'));
 console.log('path:', !!require('path'));
 console.log('express-session:', !!require('express-session'));
 console.log('connect-mongo:', !!require('connect-mongo'));
-console.log('Post model loaded:', !!require('../models/Post')); 
+ 
 
 const app = express();
 
@@ -83,7 +83,8 @@ app.use('/api/pages', require('./routes/pages'));
 
 // Front-end Routes
 app.get('/', (req, res) => res.render('index', { user: req.session.user || null }));
-app.get('/dashboard', (req, res) => res.render('dashboard', { user: req.session.user || null }));
+const postRoute = require('./routes/posts.js');
+app.use('/dashboard', postRoute);
 app.get('/contact', (req, res) => res.render('contact', { user: req.session.user || null }));
 app.get('/create-post', (req, res) => {
   if (!req.session.user) return res.redirect('/login');

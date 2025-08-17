@@ -14,7 +14,7 @@ router.post('/register', async (req, res) => {
         user = new User(req.body);
         await user.save();
 
-        req.session.user = { id: user._id, email: user.email, role: user.role };
+        req.session.user = { id: user._id, email: user.email,  username: user.username};
         res.redirect("/dashboard")
     } catch (err) {
         res.status(500).json({ msg: 'Server error' });
@@ -22,6 +22,7 @@ router.post('/register', async (req, res) => {
 });
 
 router.post('/login', async (req, res) => {
+    console.log (req.body)
     const { email, password } = req.body;
     try {
         const user = await User.findOne({ email });

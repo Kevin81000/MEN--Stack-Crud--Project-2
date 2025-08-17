@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const Post = require('./models/Post'); 
- console.log('Post model loaded in server.js:', !!require('./models/Post'));
+const Post = require("../models/post");
+ 
 
 
 const authMiddleware = require('../middleware/auth');
@@ -19,13 +19,10 @@ router.post('/', authMiddleware, async (req, res) => {
 });
 
 router.get('/', async (req, res) => { 
-  try {
-    const posts = await Post.find().populate('author', 'email');
-    res.json(posts);
-  } catch (err) {
-    res.status(500).json({ msg: 'Server error' });
-  }
-});
+const posts = await Post.find().populate('author', 'email');
+const user = (req.session.user)
+      res.render("./dashboard.ejs",{posts, user});
+  });
 
 router.get('/:id', async (req, res) => { 
   try {
