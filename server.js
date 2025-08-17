@@ -90,8 +90,7 @@ app.get('/create-post', (req, res) => {
   if (!req.session.user) return res.redirect('/login');
   res.render('create-post', { user: req.session.user });
 });
-app.get('/login', (req, res) => res.render('login', { user: req.session.user || null }));
-// app.get('/register', (req, res) => res.render('register', { user: req.session.user || null })); // Commented out
+
 
 // Blog Routes
 app.get('/blog', async (req, res) => {

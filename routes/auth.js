@@ -4,6 +4,10 @@ const User = require('../models/user');
 const bcrypt = require('bcryptjs');
 router.get("/register", (req, res) => {
     res.render("./register.ejs")
+
+})
+router.get("/login", (req, res) => {
+    res.render("./login.ejs")
 })
 router.post('/register', async (req, res) => {
     console.log(req.body)
@@ -31,7 +35,7 @@ router.post('/login', async (req, res) => {
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) return res.status(400).json({ msg: 'Invalid credentials' });
 
-        req.session.user = { id: user._id, email: user.email, role: user.role };
+        req.session.user = { id: user._id, email: user.email, };
         res.json({ msg: 'Login successful' });
     } catch (err) {
         res.status(500).json({ msg: 'Server error' });
