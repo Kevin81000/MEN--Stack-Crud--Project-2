@@ -2,21 +2,34 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard</title>
   <link rel="stylesheet" href="/stylesheets/style.css">
 </head>
 <body>
   <h1>Welcome, <%= user.username %>!</h1>
-  <% if (posts && posts.length > 0) { %>
-    <h2>Your Profiles</h2>
+
+  <h2>Create Profile</h2>
+  <form method="POST" action="/api/posts">
+    <input type="text" name="title" placeholder="Name" required>
+    <input type="text" name="platform" placeholder="Platform (e.g., Twitch)" required>
+    <input type="text" name="contentType" placeholder="Content Type (e.g., Gaming)" required>
+    <textarea name="content" placeholder="Bio"></textarea>
+    <button type="submit">Create Profile</button>
+  </form>
+
+  <h2>Your Profiles</h2>
+  <% if (posts && Array.isArray(posts) && posts.length > 0) { %>
     <ul>
       <% posts.forEach(post => { %>
         <li>
           <h3><%= post.title %></h3>
-          <p><%= post.content %></p>
+          <p><strong>Platform:</strong> <%= post.platform || 'N/A' %></p>
+          <p><strong>Content Type:</strong> <%= post.contentType || 'N/A' %></p>
+          <p><strong>Bio:</strong> <%= post.content %></p>
           <small>Created: <%= post.createdAt.toLocaleDateString() %></small>
-          <a href="/edit-post/<%= post.id %>">Edit</a>
-          <form action="/api/posts/<%= post.id %>?_method=DELETE" method="POST" style="display:inline;">
+          <a href="/edit-post/<%= post._id %>">Edit</a>
+          <form action="/api/posts/<%= post._id %>?_method=DELETE" method="POST" style="display:inline;">
             <button type="submit">Delete</button>
           </form>
         </li>

@@ -1,12 +1,13 @@
-<%- include('layout', { title: 'Edit Post', body: 
+<% include('layout', { title: 'Edit Post', body: 
   <section>
     <h2>Edit Post</h2>
-    <form action="/api/posts/<%= post._id %>" method="POST">
-      <input type="hidden" name="_method" value="PUT">
+    <form method="POST" action="/api/posts/<%= post._id %>?_method=PUT">
       <input type="text" name="title" value="<%= post.title %>" required>
-      <textarea name="content" required><%= post.content %></textarea>
-      <button type="submit">Update Post</button>
+      <input type="text" name="platform" value="<%= post.platform || '' %>" required>
+      <input type="text" name="contentType" value="<%= post.contentType || '' %>" required>
+      <textarea name="content"><%= post.content %></textarea>
+      <button type="submit">Update Profile</button>
     </form>
-    <a href="/blog/<%= post._id %>">Cancel</a>
+  <% } %>
   </section>
- }) %>
+);

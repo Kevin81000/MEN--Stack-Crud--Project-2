@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const path = require('path');
+//const Post = require('./models/Post');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const connectDB = require('./config/db');
@@ -114,35 +115,54 @@ app.get('/blog/:id', async (req, res) => {
   }
 });
 
-app.get('/edit-post/:id', async (req, res) => {
-  if (!req.session.user) return res.redirect('/login');
+app.get('/edit-post/:id', authMiddleware, async (req, res) => {
   try {
-    const post = await Post.findById(req.params.id).populate('author', 'email');
-    if (!post || (post.author.toString() !== req.session.user.id && req.session.user.role !== 'admin')) {
-      return res.status(403).render('404', { user: req.session.user || null, message: 'Not authorized' });
+    // Validate id parameter
+    if (!req.params.id || typeof req.params.id !== 'string') {
+      throw new Error('Invalid post ID');
     }
+
+    // Fetch the post
+    const post = await Post.findById(req.params.id).populate('author', 'email');
+    console.log('Fetched post:', post); // Debug log
+    console.log('Session user', req.session.user);
+
+    // Check if post exists
+    if (!post) {
+      return res.status(404).render('404', {
+        user: req.session.user || null,
+        message: 'The requested profile was not found.'
+      });
+    }
+
+
+    // Render the edit form
     res.render('edit-post', { user: req.session.user, post });
   } catch (err) {
-    console.error('Error fetching post for edit:', err);
-    res.status(500).render('404', { user: req.session.user || null, message: 'Server error' });
+    console.error('Error fetching post for edit:', err.message || err);
+    res.status(500).render('404', {
+      user: req.session.user || null,
+      message: 'An error occurred while loading the profile for editing.'
+    });
   }
 });
+  
 
 // Update Post Route (API style for consistency with routes/posts.js)
 app.put('/api/posts/:id', authMiddleware, async (req, res) => {
-  const { title, content } = req.body;
+  const { title, content, platform, contentType } = req.body;
   try {
     const post = await Post.findById(req.params.id);
     if (!post) return res.status(404).json({ msg: 'Post not found' });
-    if (post.author.toString() !== req.session.user.id && req.session.user.role !== 'admin') {
-      return res.status(401).json({ msg: 'Not authorized' });
-    }
+    
     post.title = title || post.title;
     post.content = content || post.content;
+    post.platform = platform || post.platform;
     post.updatedAt = Date.now();
     await post.save();
     res.json(post);
   } catch (err) {
+    console.error('Error updating post:', err);
     res.status(500).json({ msg: 'Server error' });
   }
 });

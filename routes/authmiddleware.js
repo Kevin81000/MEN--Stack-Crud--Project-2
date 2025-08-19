@@ -13,7 +13,6 @@ const authMiddleware = (req, res, next) => {
   }
 };
 const methodOverride = require('method-override');
-// ... (after other middleware)
 app.use(express.urlencoded({ extended: true }));
-app.use(methodOverride('_method')); // Add this line
+app.use(methodOverride('_method')); 
 module.exports = authMiddleware;

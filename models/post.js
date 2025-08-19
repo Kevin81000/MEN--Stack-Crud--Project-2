@@ -26,7 +26,7 @@ const postSchema = new mongoose.Schema({
     default: Date.now,
   },
 }, {
-  timestamps: true, // Automatically manage createdAt and updatedAt
+  timestamps: true, 
 });
 
 // Pre-save middleware to update updatedAt
