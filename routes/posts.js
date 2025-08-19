@@ -5,7 +5,6 @@ const Post = require("../models/Post");
 
 
 const authMiddleware = require('../middleware/auth');
-const adminMiddleware = require('../middleware/admin');
 
 router.post('/', authMiddleware, async (req, res) => {
   const { title, content } = req.body;

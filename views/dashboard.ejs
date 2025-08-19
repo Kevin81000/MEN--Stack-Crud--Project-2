@@ -8,15 +8,14 @@
 </head>
 <body>
   <h1>Welcome, <%= user.username %>!</h1>
-
-  <h2>Create Profile</h2>
-  <form method="POST" action="/api/posts">
+<a href="/profiles/addnew"> Create new profile</a>
+  <!-- <h2>Create Profile</h2>  <form method="POST" action="/api/posts">
     <input type="text" name="title" placeholder="Name" required>
     <input type="text" name="platform" placeholder="Platform (e.g., Twitch)" required>
     <input type="text" name="contentType" placeholder="Content Type (e.g., Gaming)" required>
     <textarea name="content" placeholder="Bio"></textarea>
     <button type="submit">Create Profile</button>
-  </form>
+  </form> -->
 
   <h2>Your Profiles</h2>
   <% if (posts && Array.isArray(posts) && posts.length > 0) { %>
@@ -36,7 +35,7 @@
       <% }); %>
     </ul>
   <% } else { %>
-    <p>You have no profiles yet. <a href="/create-post">Create one now</a>.</p>
+    <p>You have no profiles yet. >.</p>
   <% } %>
 </body>
 </html>
