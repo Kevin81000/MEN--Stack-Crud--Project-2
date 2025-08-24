@@ -27,7 +27,7 @@
           <p><strong>Content Type:</strong> <%= post.contentType || 'N/A' %></p>
           <p><strong>Bio:</strong> <%= post.content %></p>
           <small>Created: <%= post.createdAt.toLocaleDateString() %></small>
-          <a href="/edit-post/<%= post._id %>">Edit</a>
+          <a href="profiles/edit-profile/<%= post._id %>">Edit</a>
           <form action="/api/posts/<%= post._id %>?_method=DELETE" method="POST" style="display:inline;">
             <button type="submit">Delete</button>
           </form>

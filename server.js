@@ -3,12 +3,13 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const path = require('path');
-//const Post = require('./models/Post');
+const Post = require('./models/Post');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const connectDB = require('./config/db');
 const methodOverride = require('method-override');
 const authMiddleware = require('./middleware/auth'); 
+const expressLayouts = require('express-ejs-layouts');
 
 console.log('Checking modules...');
 console.log('express:', !!require('express'));
@@ -53,6 +54,7 @@ app.use(methodOverride('_method')); // Enable method override for PUT/DELETE
 app.use(express.static(path.join(__dirname, 'public')));
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
+app.use(expressLayouts);
 
 // Session Setup
 app.use(
@@ -73,78 +75,59 @@ app.use(
   })
 );
 
+app.use((req, res, next) => {
+  const originalRender = res.render;
+  res.render = function(view, options, callback) {
+    console.log(`Rendering ${view} with options:`, options);
+    originalRender.call(this, view, options, callback);
+  };
+  next();
+});
+
+
 // Routes
 const authRoute = require('./routes/auth.js');
 app.use('/auth', authRoute);
 const profileroutes = require('./routes/profiles.js'); 
-app.use('/profiles', profileroutes); 
+
+app.use('/profiles', require('./routes/profiles.js')); 
 app.use('/api/posts', require('./routes/posts')); 
 app.use('/api/contacts', require('./routes/contacts'));
 app.use('/api/pages', require('./routes/pages'));
 
-// Front-end Routes
-app.get('/', (req, res) => res.render('index', { user: req.session.user || null }));
-const postRoute = require('./routes/posts.js');
-app.use('/dashboard', postRoute);
-app.get('/contact', (req, res) => res.render('contact', { user: req.session.user || null }));
-app.get('/create-post', (req, res) => {
-  if (!req.session.user) return res.redirect('/login');
-  res.render('create-post', { user: req.session.user });
+//Front-end Routes
+app.get('/', (req, res) => res.render('index', { layout: 'layout', user: req.session.user || null, title: 'Home' }));
+app.get('/contact', (req, res) => res.render( 'contact', { layout: 'layout', user: req.session.user || null, title: 'Contact' }));
+app.get('/create-post', authMiddleware, (req, res) => {
+  res.render('create-post', { layout: 'layout', user: req.session.user, title: 'Create Post' });
 });
 
 
-// Blog Routes
+//Blog Routes
 app.get('/blog', async (req, res) => {
   try {
     const posts = await Post.find().populate('author', 'email');
-    res.render('blog', { user: req.session.user || null, posts });
+    res.render('blog', { user: req.session.user || null, posts,  title: 'Blog'});
   } catch (err) {
     console.error('Error fetching posts:', err);
-    res.render('blog', { user: req.session.user || null, posts: [] });
+    res.render('blog', { layout: 'layout', user: req.session.user || null, posts: [], title: 'Blog' });
   }
 });
 
 app.get('/blog/:id', async (req, res) => {
   try {
     const post = await Post.findById(req.params.id).populate('author', 'email');
-    if (!post) return res.status(404).render('404', { user: req.session.user || null, message: 'Post not found' });
-    res.render('blog-post', { user: req.session.user || null, post });
+    if (!post) return res.status(404).render('404', { layout: 'layout', user: req.session.user || null, message: 'Post not found', title: 'Not Found' });
+    res.render('blog-post', { layout: 'layout', user: req.session.user || null, post, title: 'Blog Post' });
   } catch (err) {
     console.error('Error fetching post:', err);
     res.status(500).render('404', { user: req.session.user || null, message: 'Server error' });
   }
 });
 
-app.get('/edit-post/:id', authMiddleware, async (req, res) => {
-  try {
-    // Validate id parameter
-    if (!req.params.id || typeof req.params.id !== 'string') {
-      throw new Error('Invalid post ID');
-    }
-
-    // Fetch the post
-    const post = await Post.findById(req.params.id).populate('author', 'email');
-    console.log('Fetched post:', post); // Debug log
-    console.log('Session user', req.session.user);
-
-    // Check if post exists
-    if (!post) {
-      return res.status(404).render('404', {
-        user: req.session.user || null,
-        message: 'The requested profile was not found.'
-      });
-    }
-
-
-    // Render the edit form
-    res.render('edit-post', { user: req.session.user, post });
-  } catch (err) {
-    console.error('Error fetching post for edit:', err.message || err);
-    res.status(500).render('404', {
-      user: req.session.user || null,
-      message: 'An error occurred while loading the profile for editing.'
-    });
-  }
+//404 handler
+app.use((req, res) => {
+  res.status(404).render('404', { layout: 'layout', user: req.user, message: 'The requested page does not exist.', title: 'Not Found' });
 });
   
 
@@ -157,6 +140,7 @@ app.put('/api/posts/:id', authMiddleware, async (req, res) => {
     
     post.title = title || post.title;
     post.content = content || post.content;
+    post.contentType = content || post.contentType;
     post.platform = platform || post.platform;
     post.updatedAt = Date.now();
     await post.save();
