@@ -1,18 +1,28 @@
-<% if (post && post._id) { %>
-  <section>
-    <h2>Edit Profile</h2>
-    <p>Editing as: <%= user.username %> (ID: <%= user._id %>)</p>
-    <form method="POST" action="/profiles/<%= post._id %>?_method=PUT">
-      <input type="text" name="title" value="<%= post.title %>" required>
-      <input type="text" name="platform" value="<%= post.platform || '' %>" required>
-      <input type="text" name="contentType" value="<%= post.contentType || '' %>" required>
-      <textarea name="content"><%= post.content %></textarea>
-      <button type="submit">Update Profile</button>
-    </form>
-  </section>
-<% } else { %>
-  <section>
-    <h2>Edit Profile</h2>
-    <p>Profile data is unavailable.</p>
-  </section>
-<% } %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Edit Profile</title>
+  <link rel="stylesheet" href="/styles.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+  <% if (post && post._id) { %>
+    <section>
+      <h2>Edit Profile</h2>
+      <p>Editing as: <%= user.username %> (ID: <%= user._id %>)</p>
+      <form method="POST" action="/profiles/<%= post._id %>?_method=PUT">
+        <input type="text" name="title" value="<%= post.title %>" required>
+        <input type="text" name="platform" value="<%= post.platform || '' %>" required>
+        <input type="text" name="contentType" value="<%= post.contentType || '' %>" required>
+        <textarea name="content"><%= post.content %></textarea>
+        <button type="submit">Update Profile</button>
+      </form>
+    </section>
+  <% } else { %>
+    <section>
+      <h2>Edit Profile</h2>
+      <p>Profile data is unavailable.</p>
+    </section>
+  <% } %>
+</body>
+</html>

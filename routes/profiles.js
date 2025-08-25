@@ -1,16 +1,16 @@
 const express = require('express');
 const router = express.Router();
-const User = require('../models/user');
+const User = require('../models/User');
 const authMiddleware = require('../middleware/auth')
 const Post = require('../models/Post');
 
-router.get('/me', authMiddleware, async (req, res) => {
-try {
+router.get('/', authMiddleware, async (req, res) => {
+  try {
     if (!req.user || !req.user._id) {
       return res.status(401).redirect('/auth/login');
     }
     const posts = await Post.find({ author: req.user._id }).populate('author', 'email');
-    res.render('profiles', { user: req.user, posts, title: 'My Profiles' });
+    res.render('profiles', { user: req.user, posts, title: 'My Profiles', layout: false });
   } catch (err) {
     console.error('Error fetching profiles:', err);
     res.status(500).render('404', {
@@ -20,6 +20,25 @@ try {
     });
   }
 });
+
+router.get('/me', authMiddleware, async (req, res) => {
+  try {
+    if (!req.user || !req.user._id) {
+      return res.status(401).redirect('/auth/login');
+    }
+    const posts = await Post.find({ author: req.user._id }).populate('author', 'email');
+    res.render('profiles', { user: req.user, posts, title: 'My Profiles', layout: false });
+  } catch (err) {
+    console.error('Error fetching profiles:', err);
+    res.status(500).render('404', {
+      user: req.user,
+      message: 'Error loading profiles',
+      title: 'Error'
+    });
+  }
+});
+
+
 
 router.get('/edit-profile/:id', authMiddleware, async (req, res) => {
   try {
@@ -44,7 +63,7 @@ router.get('/edit-profile/:id', authMiddleware, async (req, res) => {
       });
     }
     console.log('Rendering view:', 'edit-profile');
-    res.render('edit-profile', { user: req.user, post, title: 'Edit Profile' });
+    res.render('edit-profile', { user: req.user, post, title: 'Edit Profile', layout: false });
   } catch (err) {
     console.error('Error fetching profile for edit:', err.message || err.stack);
     res.status(500).render('404', {
@@ -76,9 +95,25 @@ router.put('/:id', authMiddleware, async (req, res) => {
   }
 });
 
+// Route to delete a profile
+router.delete('/:id', authMiddleware, async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+    if (!post) return res.status(404).json({ msg: 'Profile not found' });
+    if (req.user._id && post.author && post.author.toString() !== req.user._id) {
+      return res.status(403).json({ msg: 'Unauthorized to delete this profile' });
+    }
+    await post.deleteOne();
+    res.redirect('/profiles/me'); // Redirect to profiles page after deletion
+  } catch (err) {
+    console.error('Error deleting profile:', err);
+    res.status(500).json({ msg: 'Server error' });
+  }
+});
+
 // Route to render the add new profile form
 router.get('/addnew', authMiddleware, (req, res) => {
-  res.render('create-post', { user: req.user, post: null, title: 'Add New Profile' });
+  res.render('create-post', { user: req.user, post: null, title: 'Add New Profile', layout: false });
 });
 
 // Route to create a new profile
@@ -100,6 +135,7 @@ router.post('/addnew', authMiddleware, async (req, res) => {
       user: req.user,
       post: null,
       title: 'Add New Profile',
+      layout: false,
       error: 'Server error'
     });
   }
@@ -107,8 +143,8 @@ router.post('/addnew', authMiddleware, async (req, res) => {
 
 module.exports = router;
 
-     
-  
-  
+
+
+
 
 

@@ -1,23 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <title>Add New Profile</title>
+  <link rel="stylesheet" href="/styles.css">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Create Profile</title>
-  <link rel="stylesheet" href="/stylesheets/style.css">
 </head>
 <body>
-  <h1>Create a New Profile</h1>
   <% if (!user) { %>
-    <p>Please <a href="/login">log in</a> to create a profile.</p>
+    <p>Please log in to create a profile. <a href="/auth/login">Login</a></p>
   <% } else { %>
-    <form method="POST" action="/api/posts">
-      <input type="text" name="title" placeholder="Name" required>
-      <input type="text" name="platform" placeholder="Platform (e.g., Twitch)" required>
-      <input type="text" name="contentType" placeholder="Content Type (e.g., Gaming)" required>
-      <textarea name="content" placeholder="Bio"></textarea>
+    <h2>Add New Profile</h2>
+    <form method="POST" action="/profiles/addnew">
+      <input type="text" name="title" placeholder="Title" required>
+      <input type="text" name="platform" placeholder="Platform" required>
+      <input type="text" name="contentType" placeholder="Content Type" required>
+      <textarea name="content" placeholder="Content"></textarea>
       <button type="submit">Create Profile</button>
     </form>
+    <% if (typeof error !== 'undefined' && error) { %>
+      <p style="color: red;"><%= error %></p>
+    <% } %>
   <% } %>
 </body>
 </html>

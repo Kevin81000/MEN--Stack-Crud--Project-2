@@ -1,6 +1,11 @@
-<% if (!user) { %>
-  <p>Please log in to view your profiles. <a href="/auth/login">Login</a></p>
-<% } else { %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>My Profiles</title>
+  <link rel="stylesheet" href="/styles.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
   <h2>Welcome, <%= user.username %>!</h2>
   <% if (posts && posts.length > 0) { %>
     <ul>
@@ -9,6 +14,9 @@
           <strong><%= post.title %></strong> (Platform: <%= post.platform %>)
           <br>
           <a href="/profiles/edit-profile/<%= post._id %>">Edit</a>
+          <form action="/profiles/<%= post._id %>?_method=DELETE" method="POST" style="display:inline;">
+            <button type="submit" onclick="return confirm('Are you sure?')">Delete</button>
+          </form>
         </li>
       <% }); %>
     </ul>
@@ -16,4 +24,6 @@
   <% } else { %>
     <p>You have no profiles yet. <a href="/profiles/addnew">Create one</a></p>
   <% } %>
-<% } %>
+  <p><a href="/auth/logout">Logout</a></p>
+</body>
+</html>

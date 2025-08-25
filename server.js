@@ -50,7 +50,7 @@ connectDB();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(methodOverride('_method')); // Enable method override for PUT/DELETE
+app.use(methodOverride('_method', { methods: ['POST', 'GET', 'PUT', 'DELETE'] })); 
 app.use(express.static(path.join(__dirname, 'public')));
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -96,7 +96,7 @@ app.use('/api/contacts', require('./routes/contacts'));
 app.use('/api/pages', require('./routes/pages'));
 
 //Front-end Routes
-app.get('/', (req, res) => res.render('index', { layout: 'layout', user: req.session.user || null, title: 'Home' }));
+app.get('/', (req, res) => res.render('index', { layout: 'layout', user: req.session.user || null, title: 'Home', layout: false}));
 app.get('/contact', (req, res) => res.render( 'contact', { layout: 'layout', user: req.session.user || null, title: 'Contact' }));
 app.get('/create-post', authMiddleware, (req, res) => {
   res.render('create-post', { layout: 'layout', user: req.session.user, title: 'Create Post' });
