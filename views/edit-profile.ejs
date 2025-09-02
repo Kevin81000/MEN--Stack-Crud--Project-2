@@ -11,10 +11,10 @@
       <h2>Edit Profile</h2>
       <p>Editing as: <%= user.username %> (ID: <%= user._id %>)</p>
       <form method="POST" action="/profiles/<%= post._id %>?_method=PUT">
-        <input type="text" name="title" value="<%= post.title %>" required>
-        <input type="text" name="platform" value="<%= post.platform || '' %>" required>
-        <input type="text" name="contentType" value="<%= post.contentType || '' %>" required>
-        <textarea name="content"><%= post.content %></textarea>
+        <input type="text" name="title" placeholder="Title" required>
+        <input type="text" name="platform"  placeholder="Platform" required>
+        <input type="text" name="contentType" placeholder="Content Type" required>
+        <textarea name= "Content" placeholder= "Content"></textarea>
         <button type="submit">Update Profile</button>
       </form>
     </section>
