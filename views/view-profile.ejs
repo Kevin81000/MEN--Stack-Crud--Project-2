@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>View Profile</title>
+  <link rel="stylesheet" href="/styles.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+  <% if (post && post._id) { %>
+    <section>
+      <h2>Profile Details</h2>
+      <p><strong>Author:</strong> <%= post.author.username %> (Email: <%= post.author.email %>)</p>
+      <p><strong>Title:</strong> <%= post.title %></p>
+      <p><strong>Platform:</strong> <%= post.platform %></p>
+      <p><strong>Content Type:</strong> <%= post.contentType %></p>
+      <p><strong>Content:</strong> <%= post.content %></p>
+      <p>
+        <a href="/profiles/edit-profile/<%= post._id %>">Edit</a> |
+        <form action="/profiles/<%= post._id %>?_method=DELETE" method="POST" style="display:inline;">
+          <button type="submit" onclick="return confirm('Are you sure?')">Delete</button>
+        </form> |
+        <a href="/profiles/me">Back to My Profiles</a>
+      </p>
+    </section>
+  <% } else { %>
+    <section>
+      <h2>View Profile</h2>
+      <p>Profile data is unavailable.</p>
+    </section>
+  <% } %>
+</body>
+</html>

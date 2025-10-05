@@ -10,7 +10,7 @@
   <% if (typeof error !== 'undefined' && error) { %>
     <p style="color: red;"><%= error %></p>
   <% } %>
-  <form method="POST" action="/auth/login">
+  <form method="POST" action="/auth/login" autocomplete="off">
     <div>
       <label for="username">Username:</label>
       <input type="text" id="username" name="username" required>

@@ -22,7 +22,9 @@ console.log('connect-mongo:', !!require('connect-mongo'));
  
 
 const app = express();
+app.use(express.static(path.join(__dirname, 'public/styles.css')));
 
+// ... (rest of the code)
 // Load environment variables
 dotenv.config();
 const result = dotenv.config({ path: path.resolve(__dirname, '.env') });
@@ -92,12 +94,13 @@ const profileroutes = require('./routes/profiles.js');
 
 app.use('/profiles', require('./routes/profiles.js')); 
 app.use('/api/posts', require('./routes/posts')); 
-app.use('/api/contacts', require('./routes/contacts'));
 app.use('/api/pages', require('./routes/pages'));
+
+
+
 
 //Front-end Routes
 app.get('/', (req, res) => res.render('index', { layout: 'layout', user: req.session.user || null, title: 'Home', layout: false}));
-app.get('/contact', (req, res) => res.render( 'contact', { layout: 'layout', user: req.session.user || null, title: 'Contact' }));
 app.get('/create-post', authMiddleware, (req, res) => {
   res.render('create-post', { layout: 'layout', user: req.session.user, title: 'Create Post' });
 });

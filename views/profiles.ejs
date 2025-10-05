@@ -13,8 +13,9 @@
         <li>
           <strong><%= post.title %></strong> (Platform: <%= post.platform %>)
           <br>
+          <a href="/profiles/view/<%= post._id %>">View</a> |
           <a href="/profiles/edit-profile/<%= post._id %>">Edit</a>
-          <form action="/profiles/<%= post._id %>?_method=DELETE" method="POST" style="display:inline;">
+          <form action="/profiles/<%= post._id %>?_method=DELETE" method="POST" style="display:inline;" autocomplete="off">
             <button type="submit" onclick="return confirm('Are you sure?')">Delete</button>
           </form>
         </li>

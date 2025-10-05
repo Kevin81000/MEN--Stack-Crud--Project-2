@@ -141,6 +141,52 @@ router.post('/addnew', authMiddleware, async (req, res) => {
   }
 });
 
+router.get('/view/:id', authMiddleware, async (req, res) => {
+  try {
+    console.log('Attempting to view profile with ID:', req.params.id);
+    if (!req.params.id || typeof req.params.id !== 'string') {
+      throw new Error('Invalid profile ID');
+    }
+    const post = await Post.findById(req.params.id).populate('author', 'username email');
+    if (!post) {
+      return res.status(404).render('404', {
+        user: req.user,
+        message: 'The requested profile was not found. ID: ' + req.params.id,
+        title: 'Not Found',
+        layout: false
+      });
+    }
+    if (post.author._id.toString() !== req.user._id) {
+      return res.status(403).render('404', {
+        user: req.user,
+        message: 'Unauthorized to view this profile',
+        title: 'Unauthorized',
+        layout: false
+      });
+    }
+    res.render('view-profile', {
+      user: req.user,
+      post,
+      title: 'View Profile',
+      layout: false
+    });
+  } catch (err) {
+    console.error('Error viewing profile:', err.message || err.stack);
+    res.status(500).render('404', {
+      user: req.user,
+      message: 'An error occurred while loading the profile. Error: ' + err.message,
+      title: 'Error',
+      layout: false
+    });
+  }
+});
+
+
+
+
+
+
+
 module.exports = router;
 
 
