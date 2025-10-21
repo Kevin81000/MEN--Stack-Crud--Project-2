@@ -90,7 +90,6 @@ router.put('/:id', authMiddleware, async (req, res) => {
     await post.save();
     res.redirect('/profiles/me'); 
   } catch (err) {
-    console.error('Error updating profile:', err);
     res.status(500).json({ msg: 'Server error' });
   }
 });
@@ -130,7 +129,6 @@ router.post('/addnew', authMiddleware, async (req, res) => {
     await post.save();
     res.redirect('/profiles/me');
   } catch (err) {
-    console.error('Error creating profile:', err);
     res.status(500).render('create-post', {
       user: req.user,
       post: null,
@@ -143,7 +141,7 @@ router.post('/addnew', authMiddleware, async (req, res) => {
 
 router.get('/view/:id', authMiddleware, async (req, res) => {
   try {
-    console.log('Attempting to view profile with ID:', req.params.id);
+    
     if (!req.params.id || typeof req.params.id !== 'string') {
       throw new Error('Invalid profile ID');
     }
@@ -171,7 +169,6 @@ router.get('/view/:id', authMiddleware, async (req, res) => {
       layout: false
     });
   } catch (err) {
-    console.error('Error viewing profile:', err.message || err.stack);
     res.status(500).render('404', {
       user: req.user,
       message: 'An error occurred while loading the profile. Error: ' + err.message,

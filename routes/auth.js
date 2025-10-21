@@ -11,9 +11,8 @@ router.get("/login", (req, res) => {
 router.post('/login', async (req, res) => {
   try {
     const { username, password } = req.body;
-    console.log('Login attempt:', { username, password });
     const user = await User.findOne({ username });
-    console.log('User found:', user);
+    
     if (!user || !(await bcrypt.compare(password, user.password))) {
       return res.status(400).render('login', {
         user: req.session.user || null, title: 'Login', layout: false, error: 'Invalid username or password'
@@ -42,9 +41,8 @@ router.get('/register', (req, res) => {
 router.post('/register', async (req, res) => {
   try {
     const { username, password, email } = req.body;
-    console.log('Registration attempt:', { username, password, email });
     const existingUser = await User.findOne({ username });
-    console.log('Existing user check:', existingUser);
+  
     if (existingUser) {
       return res.status(400).render('register', {
         user: req.session.user || null,

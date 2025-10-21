@@ -11,7 +11,6 @@ module.exports = (req, res, next) => {
       ? { _id: req.session.user._id, username: req.session.user.username }
       : { _id: null, username: 'Guest' };
 
-      console.log('User attached:', req.user);
     next();
   } catch (err) {
     console.error(' Middleware error:', {
