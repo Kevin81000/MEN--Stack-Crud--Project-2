@@ -74,7 +74,7 @@ router.get('/edit-profile/:id', authMiddleware, async (req, res) => {
   }
 });
 
-// Route to update a profile
+
 router.put('/:id', authMiddleware, async (req, res) => {
   try {
     const { title, platform, contentType, content } = req.body;
@@ -88,14 +88,14 @@ router.put('/:id', authMiddleware, async (req, res) => {
     post.contentType = contentType || post.contentType;
     post.content = content || post.content;
     await post.save();
-    res.redirect('/profiles/me'); // Redirect to profile page after update
+    res.redirect('/profiles/me'); 
   } catch (err) {
     console.error('Error updating profile:', err);
     res.status(500).json({ msg: 'Server error' });
   }
 });
 
-// Route to delete a profile
+
 router.delete('/:id', authMiddleware, async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
@@ -104,19 +104,19 @@ router.delete('/:id', authMiddleware, async (req, res) => {
       return res.status(403).json({ msg: 'Unauthorized to delete this profile' });
     }
     await post.deleteOne();
-    res.redirect('/profiles/me'); // Redirect to profiles page after deletion
+    res.redirect('/profiles/me'); 
   } catch (err) {
     console.error('Error deleting profile:', err);
     res.status(500).json({ msg: 'Server error' });
   }
 });
 
-// Route to render the add new profile form
+
 router.get('/addnew', authMiddleware, (req, res) => {
   res.render('create-post', { user: req.user, post: null, title: 'Add New Profile', layout: false });
 });
 
-// Route to create a new profile
+
 router.post('/addnew', authMiddleware, async (req, res) => {
   try {
     const { title, platform, contentType, content } = req.body;

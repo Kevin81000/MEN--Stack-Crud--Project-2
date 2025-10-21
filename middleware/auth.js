@@ -20,7 +20,7 @@ module.exports = (req, res, next) => {
       url: req.originalUrl,
       session: req.session ? 'exists' : 'missing'
     });
-    // Fallback to a default user on error to avoid breaking the flow
+    
     req.user = { _id: null, username: 'Guest' };
     if (req.xhr || req.headers.accept.indexOf('json') > -1) {
       return res.status(500).json({
@@ -29,6 +29,6 @@ module.exports = (req, res, next) => {
         details: { session: !!req.session }
       });
     }
-    next(); // Continue even on error, no redirect
+    next(); 
   }
 };

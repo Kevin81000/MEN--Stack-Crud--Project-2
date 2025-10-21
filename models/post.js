@@ -29,7 +29,7 @@ const postSchema = new mongoose.Schema({
   timestamps: true, 
 });
 
-// Pre-save middleware to update updatedAt
+
 postSchema.pre('findOneAndUpdate', function (next) {
   this.set({updateAt: Date.now() });
   next();
