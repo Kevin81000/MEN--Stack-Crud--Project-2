@@ -8,24 +8,22 @@
 <body>
   <% if (post && post._id) { %>
     <section>
-      <h2>Profile Details</h2>
+      <h2>Post Details</h2>
       <p><strong>Author:</strong> <%= post.author.username %> (Email: <%= post.author.email %>)</p>
       <p><strong>Title:</strong> <%= post.title %></p>
-      <p><strong>Platform:</strong> <%= post.platform %></p>
-      <p><strong>Content Type:</strong> <%= post.contentType %></p>
       <p><strong>Content:</strong> <%= post.content %></p>
       <p>
         <a href="/profiles/edit-profile/<%= post._id %>">Edit</a> |
         <form action="/profiles/<%= post._id %>?_method=DELETE" method="POST" style="display:inline;">
           <button type="submit" onclick="return confirm('Are you sure?')">Delete</button>
         </form> |
-        <a href="/profiles/me">Back to My Profiles</a>
+        <a href="/profiles/me">Back to My Post Details</a>
       </p>
     </section>
   <% } else { %>
     <section>
-      <h2>View Profile</h2>
-      <p>Profile data is unavailable.</p>
+      <h2>View Post</h2>
+      <p>Post data is unavailable.</p>
     </section>
   <% } %>
 </body>

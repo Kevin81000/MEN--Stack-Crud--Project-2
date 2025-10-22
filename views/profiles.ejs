@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>My Profiles</title>
+  <title>My Post</title>
   <link rel="stylesheet" href="/styles.css">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
@@ -11,7 +11,7 @@
     <ul>
       <% posts.forEach(post => { %>
         <li>
-          <strong><%= post.title %></strong> (Platform: <%= post.platform %>)
+          <strong><%= post.title %></strong> 
           <br>
           <a href="/profiles/view/<%= post._id %>">View</a> |
           <a href="/profiles/edit-profile/<%= post._id %>">Edit</a>
@@ -21,9 +21,9 @@
         </li>
       <% }); %>
     </ul>
-    <a href="/profiles/addnew">Add New Profile</a>
+    <a href="/profiles/addnew">Add New Post</a>
   <% } else { %>
-    <p>You have no profiles yet. <a href="/profiles/addnew">Create one</a></p>
+    <p>You have no Post yet. <a href="/profiles/addnew">Create one</a></p>
   <% } %>
   <p><a href="/auth/logout">Logout</a></p>
 </body>

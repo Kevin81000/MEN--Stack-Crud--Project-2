@@ -9,13 +9,11 @@
   <% if (!user) { %>
     <p>Please log in to create a profile. <a href="/auth/login">Login</a></p>
   <% } else { %>
-    <h2>Add New Profile</h2>
+    <h2>Add Post</h2>
     <form method="POST" action="/profiles/addnew" autocomplete="off">
       <input type="text" name="title" placeholder="Title" required>
-      <input type="text" name="platform" placeholder="Platform" required>
-      <input type="text" name="contentType" placeholder="Content Type" required>
       <textarea name="content" placeholder="Content"></textarea>
-      <button type="submit">Create Profile</button>
+      <button type="submit">Create Post</button>
     </form>
     <% if (typeof error !== 'undefined' && error) { %>
       <p style="color: red;"><%= error %></p>
