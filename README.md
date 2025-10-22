@@ -1,5 +1,5 @@
 # Streamers University
-
+![alt text](<Screenshot 2025-10-22 at 1.36.35 PM.png>)
 Welcome to **Streamers University**, a web application designed to help streamers manage their streaming profiles and content. Built with a modern MEAN stack, this app allows users to register, log in, create, view, edit, and delete streaming profiles with a sleek, responsive design and pre-filled edit forms for convenience.
 
 ## Table of Contents
